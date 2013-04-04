@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="divider_padding">10pt</dimen>
+    <dimen name="five_pt">5pt</dimen>
+    <dimen name="ten_pt">10pt</dimen>
+    <dimen name="three_pt">3pt</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+</resources>

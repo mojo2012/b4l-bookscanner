@@ -1,0 +1,9 @@
+# view AndroidManifest.xml #generated:28
+-keep class at.spot.b4lbookscanner.activity.BookDetailsActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:19
+-keep class at.spot.b4lbookscanner.activity.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:32
+-keep class at.spot.b4lbookscanner.activity.ShowAllScannedBarcodesActivity { <init>(...); }
+

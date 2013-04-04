@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="fill_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/divider_padding"
+    android:showDividers="none"
+    tools:context=".MainActivity" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/divider_padding"
+        android:src="@drawable/b4l_logo" />
+
+    <Button
+        android:id="@+id/scan_isbn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan ISBN" />
+
+    <Button
+        android:id="@+id/enter_isbn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter ISBN" />
+
+    <Button
+        android:id="@+id/search_by_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Search by title" />
+
+    <Button
+        android:id="@+id/show_scanned_barcodes"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Show scanned barcodes" />
+
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload to database" />
+
+</LinearLayout>
