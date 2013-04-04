@@ -1,6 +1,10 @@
 package at.spot.b4lbookscanner.googlebooks;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,44 +77,39 @@ public class Util {
 	// }
 
 	public static String getStringContent(String url) throws Exception {
-		// InputStream ips = null;
-		// BufferedReader buf = null;
-		//
-		// String ret = null;
-		//
-		// try {
-		// HttpClient client = new DefaultHttpClient();
-		// HttpGet request = new HttpGet();
-		// request.setURI(new URI(url));
-		// HttpResponse response = client.execute(request);
-		//
-		// ips = response.getEntity().getContent();
-		// buf = new BufferedReader(new InputStreamReader(ips, "UTF-8"));
-		//
-		// StringBuilder sb = new StringBuilder();
-		// String s;
-		// while (true) {
-		// s = buf.readLine();
-		// if (s == null || s.length() == 0)
-		// break;
-		// sb.append(s);
-		// }
-		//
-		// ret = sb.toString();
-		//
-		// } catch (Exception ex) {
-		// ex.printStackTrace();
-		// } finally {
-		// try {
-		// buf.close();
-		// ips.close();
-		// } catch (Exception e) {
-		// }
-		// }
-		//
-		// return ret;
+		BufferedReader buf = null;
+		InputStream in = null;
 
-		return null;
+		String ret = null;
+
+		try {
+			URL u = new URL(url);
+			in = u.openStream();
+
+			buf = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+
+			StringBuilder sb = new StringBuilder();
+			String s;
+			while (true) {
+				s = buf.readLine();
+				if (s == null || s.length() == 0)
+					break;
+				sb.append(s);
+			}
+
+			ret = sb.toString();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				buf.close();
+				in.close();
+			} catch (Exception e) {
+			}
+		}
+
+		return ret;
 	}
 
 	public static boolean isValidISBN(String isbn) {
