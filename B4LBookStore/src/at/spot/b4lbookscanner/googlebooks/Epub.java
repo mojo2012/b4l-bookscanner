@@ -1,9 +1,9 @@
-package at.spot.b4lbookscanner.google.service.book;
+package at.spot.b4lbookscanner.googlebooks;
 
 import java.io.Serializable;
 
-public class Pdf implements Serializable {
-	private static final long	serialVersionUID	= -307117737034133350L;
+public class Epub implements Serializable {
+	private static final long	serialVersionUID	= 3233525689750393928L;
 	private boolean				isAvailable;
 
 	public boolean getIsAvailable() {

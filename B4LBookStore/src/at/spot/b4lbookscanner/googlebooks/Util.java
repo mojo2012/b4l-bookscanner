@@ -1,4 +1,4 @@
-package at.spot.b4lbookscanner.google.service.book;
+package at.spot.b4lbookscanner.googlebooks;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
