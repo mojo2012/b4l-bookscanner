@@ -138,6 +138,6 @@ public class Book {
 	public String toCSVLine() {
 		return getId() + ";" + getIsbn() + ";" + getIsbnType() + ";" + getAuthors() + ";" + getTitle() + ";"
 				+ getSummary() + ";" + getPublisher() + ";" + getReleaseDate() + ";" + getPrice() + ";"
-				+ getNumber();
+				+ (getNumber() != null ? getNumber() : "") + ";" + getImageUrl();
 	}
 }
