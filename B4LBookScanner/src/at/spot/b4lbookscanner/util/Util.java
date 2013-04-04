@@ -5,9 +5,9 @@ import java.io.InputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import at.spot.b4lbookscanner.google.service.book.VolumeList;
+import at.spot.b4lbookscanner.googlebooks.VolumeList;
 
-public class Util extends at.spot.b4lbookscanner.google.service.book.Util {
+public class Util extends at.spot.b4lbookscanner.googlebooks.Util {
 	private final static String	TAG					= "Util";
 
 	static final String			URL_ISBN_10			= "https://www.googleapis.com/books/v1/volumes?q=isbn:%s";

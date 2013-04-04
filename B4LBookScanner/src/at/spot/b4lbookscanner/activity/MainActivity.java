@@ -20,9 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import at.spot.b4lbookscanner.R;
-import at.spot.b4lbookscanner.google.service.book.Items;
-import at.spot.b4lbookscanner.google.service.book.Util;
-import at.spot.b4lbookscanner.google.service.book.VolumeList;
+import at.spot.b4lbookscanner.googlebooks.Items;
+import at.spot.b4lbookscanner.googlebooks.Util;
+import at.spot.b4lbookscanner.googlebooks.VolumeList;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
 
 import com.google.zxing.integration.android.IntentIntegrator;
