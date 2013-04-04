@@ -23,11 +23,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import at.spot.b4lbookscanner.R;
 import at.spot.b4lbookscanner.google.service.book.IndustryIdentifiers;
-import at.spot.b4lbookscanner.google.service.book.Util;
 import at.spot.b4lbookscanner.google.service.book.VolumeInfo;
 import at.spot.b4lbookscanner.google.service.book.VolumeList;
 import at.spot.b4lbookscanner.persistence.Book;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
+import at.spot.b4lbookscanner.util.Util;
 
 public class BookDetailsActivity extends Activity {
 	TextView						title			= null;
