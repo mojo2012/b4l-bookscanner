@@ -134,4 +134,10 @@ public class Book {
 				", Price: " + getPrice() +
 				", Number: " + getNumber();
 	}
+
+	public String toCSVLine() {
+		return getId() + ";" + getIsbn() + ";" + getIsbnType() + ";" + getAuthors() + ";" + getTitle() + ";"
+				+ getSummary() + ";" + getPublisher() + ";" + getReleaseDate() + ";" + getPrice() + ";"
+				+ getNumber();
+	}
 }
