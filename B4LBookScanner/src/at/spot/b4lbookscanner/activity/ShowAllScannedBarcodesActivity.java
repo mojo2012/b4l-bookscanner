@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import at.spot.b4lbookscanner.R;
-import at.spot.b4lbookscanner.persistence.Book;
+import at.spot.b4lbookscanner.googlebooks.Book;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
 
 public class ShowAllScannedBarcodesActivity extends Activity {

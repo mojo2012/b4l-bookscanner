@@ -22,10 +22,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import at.spot.b4lbookscanner.R;
+import at.spot.b4lbookscanner.googlebooks.Book;
 import at.spot.b4lbookscanner.googlebooks.IndustryIdentifiers;
 import at.spot.b4lbookscanner.googlebooks.VolumeInfo;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
-import at.spot.b4lbookscanner.persistence.Book;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
 import at.spot.b4lbookscanner.util.Util;
 
