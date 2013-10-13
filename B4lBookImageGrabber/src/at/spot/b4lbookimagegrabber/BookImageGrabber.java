@@ -30,7 +30,7 @@ public class BookImageGrabber {
 
 	private final static String DB_CONNECTION_URL = "jdbc:sqlite:/Users/matthias/Desktop/b4l_temp/db/db.sqlite";
 	
-	public static void main(String[] args) {
+	public static void fillUpMissingData() {
 		List<Book> books = null;
 		List<Book> updatedBooks = new ArrayList<>();
 		
@@ -301,7 +301,7 @@ public class BookImageGrabber {
 		
 		try {
 			con = getConnection();
-			pstat = con.prepareStatement("SELECT * FROM book WHERE isbn is null or isbn = '';");
+			pstat = con.prepareStatement("SELECT * FROM book; -- WHERE isbn is null or isbn = '';");
 			
 			r = pstat.executeQuery();
 			
@@ -388,5 +388,30 @@ public class BookImageGrabber {
 		Connection con = DriverManager.getConnection(DB_CONNECTION_URL);
 		
 		return con;
+	}
+	
+	public static void downloadMissingImages() {
+		try {
+			List<Book> books = readBookListDB();
+			
+			int x = 1;
+			
+			for (Book b : books) {
+				System.out.println("Downloading image " + x++);
+				
+				File f = new File("/Users/matthias/Desktop/b4l_temp/images/" + b.getIsbn().replace(":", "_") + ".jpg");
+				
+				if (StringUtil.check(b.getImageUrl()) && !b.getImageUrl().contains("nopic") && !f.exists())
+					downloadImageToFolder(b.getImageUrl(), f.getAbsolutePath());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
+	
+	public static void main(String[] args) {
+//		fillUpMissingData();
+		downloadMissingImages();
 	}
 }
