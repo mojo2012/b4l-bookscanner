@@ -16,7 +16,13 @@ public class Util extends at.spot.b4lbookscanner.googlebooks.Util {
 	static final String			URL_GENERAL_SEARCH	= "https://www.googleapis.com/books/v1/volumes?q=%s";
 
 	public static VolumeList getBookByISBN(String isbn) {
-		return getBookByISBN10(isbn);
+		try {
+			return getBookByISBN10(isbn);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	public static Bitmap getImageContent(String url) {

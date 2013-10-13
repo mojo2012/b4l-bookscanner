@@ -12,69 +12,141 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 import at.spot.b4lbookscanner.googlebooks.Book;
+import at.spot.b4lbookscanner.googlebooks.IndustryIdentifiers;
 import at.spot.b4lbookscanner.googlebooks.Util;
 import at.spot.b4lbookscanner.googlebooks.VolumeInfo;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
+import at.spot.util.StringUtil;
 
 public class BookImageGrabber {
 
+	private final static String DB_CONNECTION_URL = "jdbc:sqlite:/Users/matthias/Desktop/b4l_temp/db/db.sqlite";
+	
 	public static void main(String[] args) {
+		List<Book> books = null;
+		List<Book> updatedBooks = new ArrayList<>();
+		
 		try {
-			List<Book> books = readBookListCSV("/Users/matthias/Desktop/temp/scanned_books.csv");
-			List<Book> updatedBooks = new ArrayList<>();
+//			books = readBookListCSV("/Users/matthias/Desktop/b4l_temp/to_import.csv");
+			books = readBookListDB();
 
 			VolumeList googleBook = null;
-
+			VolumeInfo info = null;
+			
 			int count = 1;
 
 			for (Book e : books) {
+				info = null;
+				
 				System.out.println("Updating " + (count++) + "/" + books.size());
 
-				if (e.getImageUrl() == null || e.getImageUrl().equals("")) {
-					if (e.getIsbnType() != null && e.getIsbnType().equals("ISBN_10")) {
-						googleBook = Util.getBookByISBN10(e.getIsbn());
-					} else if (e.getIsbnType() != null && e.getIsbnType().equals("ISBN_13")) {
-						googleBook = Util.getBookByISBN(e.getIsbn());
-					} else {
-						googleBook = Util.getBookByTitle(e.getTitle());
-					}
-
-					if (googleBook != null && googleBook.getItems().size() >= 1) {
-
-						VolumeInfo info = googleBook.getItems().get(0).getVolumeInfo();
-
-						if (info != null && info.getImageLinks() != null) {
+				if (e.isFilledOut()) {
+					continue;
+				} else {
+					updatedBooks.add(e);
+				}
+				
+				if (e.getIsbnType() != null && e.getIsbnType().equals("ISBN_10")) {
+					googleBook = Util.getBookByISBN10(e.getIsbn());
+				} else if (e.getIsbnType() != null && e.getIsbnType().equals("ISBN_13")) {
+					googleBook = Util.getBookByISBN(e.getIsbn());
+				} else {
+					googleBook = Util.getBookByTitle(e.getTitle());
+				}
+				
+				if (googleBook != null && googleBook.getItems() != null && googleBook.getItems().size() >= 1) {
+					info = googleBook.getItems().get(0).getVolumeInfo();
+				} else {
+					System.out.println("Could not retrieve book infos from Google!");
+				}
+				
+				if (info != null) {
+					if (!StringUtil.check(e.getImageUrl())) {
+						if (info.getImageLinks() != null) {
 							e.setImageUrl(info.getImageLinks().getThumbnail());
 						} else {
 							e.setImageUrl("http://shop.b4l-wien.at/images/nopic.png");
 						}
 					}
+					
+					if (!StringUtil.check(e.getIsbn())) {
+						String isbn = "";
+						String isbnType = "";
+						
+						if (info.getIndustryIdentifiers() != null && info.getIndustryIdentifiers().size() > 0) {
+						
+							for (IndustryIdentifiers ii : info.getIndustryIdentifiers()) {
+								if (ii.getType().contains("13")) {
+									isbn = ii.getIdentifier();
+									isbnType = ii.getType();
+									break;
+								}
+							}
+							
+							if (!StringUtil.check(isbn)) {
+								isbn = info.getIndustryIdentifiers().get(0).getIdentifier();
+								isbnType = info.getIndustryIdentifiers().get(0).getType();
+							}
+						
+							e.setIsbn(isbn);;
+							e.setIsbnType(isbnType);
+						}
+					}
+					
+					if (!StringUtil.check(e.getPublisher())) {
+						if (info.getPublisher() != null) {
+							e.setPublisher(info.getPublisher());
+						}
+					}
+					
+					if (!StringUtil.check(e.getReleaseDate())) {
+						if (info.getPublisher() != null) {
+							e.setPublisher(info.getPublishedDate());
+						}
+					}
 				}
+				
+				//downloadImageToFolder(e.getImageUrl(), "/Users/matthias/Desktop/b4l_temp/images/" + e.getIsbn() + ".jpg");
+//				e.setImageUrl("http://shop.b4l-wien.at/images/" + e.getIsbn());
+//				updatedBooks.add(e);
 
-				downloadImageToFolder(e.getImageUrl(), "/Users/matthias/Desktop/temp/images/" + e.getIsbn() + ".jpg");
-				e.setImageUrl("http://shop.b4l-wien.at/images/" + e.getIsbn());
-				updatedBooks.add(e);
-
-				if (count % 5 == 0) {
-					writeBookListCSV(updatedBooks, "/Users/matthias/Desktop/temp/updated_books.csv",
-							"/Users/matthias/Desktop/temp/images/");
-					updatedBooks.clear();
-					Thread.sleep(2000);
-				}
+//				if (count % 5 == 0) {
+//					writeBookListCSV(books, "/Users/matthias/Desktop/b4l_temp/updated_books.csv",
+//							"/Users/matthias/Desktop/b4l_temp/images/");
+//					updatedBooks.clear();
+////					Thread.sleep(2000);
+//				}
 
 				Thread.sleep(1000);
+				
+				saveToDB(e);
 			}
 
 			System.out.println("Finished");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (e instanceof IOException) {
+				IOException ex = (IOException) e;
+				System.out.println("Google interruption ...");
+			} else {
+				e.printStackTrace();
+			}
+				
+			System.exit(0);
+		} finally {
+//			if (updatedBooks != null && updatedBooks.size() > 0) {
+//				writeBookListCSV(books, "/Users/matthias/Desktop/b4l_temp/updated_books.csv",
+//						"/Users/matthias/Desktop/b4l_temp/images/");
+//			}	
 		}
-
 	}
 
 	public static void writeBookListCSV(List<Book> books, String csvFile, String imagePath) {
@@ -86,25 +158,19 @@ public class BookImageGrabber {
 			String csvLine = "";
 
 			for (Book e : books) {
-				csvLine = e.getId()
-						+ ";"
-						+ e.getTitle()
-						+ ";"
-						+ ""
-						+ ";"
-						+ e.getPrice()
-						+ ";"
-						+ 1
-						+ ";"
-						+ "Code: "
-						+ e.getIsbn()
-						+
-						(e.getPublisher() != null && !e.getPublisher().equals("") ? ", Publisher: "
-								+ e.getPublisher() : "")
-						+
-						(e.getReleaseDate() != null && !e.getReleaseDate().equals("") ? ", Veröffentlichung: "
-								+ e.getReleaseDate() : "") +
-						";" + e.getSummary() + ";" + e.getImageUrl();
+				csvLine = 
+						e.getId() + ";" +
+						e.getId() + ";" +
+						e.getIsbn() + ";" +
+						e.getIsbnType() + ";" +
+						e.getAuthors() + ";" +
+						"\"" + e.getTitle() + "\";" +
+						"\"" + (StringUtil.check(e.getSummary()) ? e.getSummary() : "") + "\";" +
+						(StringUtil.check(e.getPublisher()) ? e.getPublisher() : "") + ";" + 
+						(StringUtil.check(e.getReleaseDate()) ? e.getReleaseDate() : "") + ";" +
+						(e.getPrice() != null ? e.getPrice() : "" + ";" + 
+						(StringUtil.check(e.getStorageLocation()) ? e.getStorageLocation() : "") + ";" +
+						e.getImageUrl());
 
 				writer.append(csvLine);
 				writer.newLine();
@@ -179,21 +245,39 @@ public class BookImageGrabber {
 
 				b = new Book();
 
-				b.setId(Integer.parseInt(columns[0]));
-				b.setIsbn(columns[1].replace("/", "_"));
-				b.setIsbnType(columns[2]);
-				b.setAuthors(columns[3]);
-				b.setTitle(columns[4]);
-				b.setSummary(columns[5]);
-				b.setPublisher(columns[6]);
-				b.setReleaseDate(columns[7]);
-				b.setPrice(Float.parseFloat(columns[8]));
-				b.setNumber(columns[9]);
-
-				if (columns.length >= 11)
-					b.setImageUrl(columns[10]);
-
-				books.add(b);
+//				if (!columns[0].equals("x")) {
+				if (true) {
+					if (StringUtil.check(columns[2]))
+						b.setId(Integer.parseInt(columns[2]));
+						
+//					b.setNumber(columns[2]);
+					
+					if (StringUtil.check(columns[3]))
+						b.setIsbn(columns[3].replace("/", "_"));
+					
+					b.setIsbnType(columns[4]);
+					b.setAuthors(columns[5]);
+					b.setTitle(columns[6]);
+					b.setSummary(columns[7]);
+					b.setPublisher(columns[8]);
+					b.setReleaseDate(columns[9]);
+					
+					if (StringUtil.check(columns[10])) {
+						columns[10] = columns[10].replace(",", ".");
+						b.setPrice(Float.parseFloat(columns[10]));
+					}
+					
+					if (columns.length >= 14)
+						b.setStorageLocation(columns[13]);
+	
+					if (columns.length >= 15) {
+						b.setImageUrl(columns[14]);
+					}
+	
+					books.add(b);
+				} else {
+					System.out.println("Ignoring book with number=" + columns[2]);
+				}
 			}
 
 		} catch (Exception e) {
@@ -206,5 +290,103 @@ public class BookImageGrabber {
 		}
 
 		return books;
+	}
+	
+	public static List<Book> readBookListDB() throws Exception {
+		List<Book> books = new ArrayList<>();
+		
+		Connection con = null;
+		PreparedStatement pstat = null;
+		ResultSet r = null;
+		
+		try {
+			con = getConnection();
+			pstat = con.prepareStatement("SELECT * FROM book WHERE isbn is null or isbn = '';");
+			
+			r = pstat.executeQuery();
+			
+			while (r.next()) {
+				Book b = new Book();
+				
+				b.setId(r.getInt("number"));
+				b.setNumber(r.getInt("number") + "");
+				b.setIsbn(r.getString("isbn"));
+				b.setIsbnType(r.getString("isbn_type"));
+				b.setTitle(r.getString("title"));
+				b.setSummary(r.getString("summary"));
+				b.setAuthors(r.getString("authors"));
+				b.setPublisher(r.getString("publisher"));
+				b.setReleaseDate(r.getString("release_date"));
+				b.setPrice(r.getFloat("price"));
+				b.setImageUrl(r.getString("image_url"));
+				b.setStorageLocation(r.getString("storage_location"));
+				
+				books.add(b);
+			}
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try {
+				con.close();
+			} catch (Exception e) {}
+		}
+		
+		return books;
+	}
+
+	public static void saveToDB(Book book) throws Exception {
+		Connection con = null;
+		PreparedStatement pstat = null;
+		ResultSet r = null;
+		
+		try {
+			con = getConnection();
+			pstat = con.prepareStatement(
+					"UPDATE book " +
+					"SET " +
+					"	isbn = ?, isbn_type = ?, authors = ?, title = ?, summary = ?, " +
+					"	publisher = ?, release_date = ?, price = ?, image_url = ?, storage_location = ? " +
+					"WHERE number = ?;");
+			
+			int x = 1;
+			
+			pstat.setString(x++, book.getIsbn());
+			pstat.setString(x++, book.getIsbnType());
+			pstat.setString(x++, book.getAuthors());
+			pstat.setString(x++, book.getTitle());
+			pstat.setString(x++, book.getSummary());
+			pstat.setString(x++, book.getPublisher());
+			pstat.setString(x++, book.getReleaseDate());
+			pstat.setFloat(x++, book.getPrice());
+			pstat.setString(x++, book.getImageUrl());
+			pstat.setString(x++, book.getStorageLocation());
+			pstat.setInt(x++, book.getId());
+			
+			pstat.execute();
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try {
+				con.close();
+			} catch (Exception e) {}
+		}
+	}
+
+	public static void saveToDB(List<Book> books) {
+		try {
+			
+//		    Statement stat = conn.createStatement();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Connection getConnection() throws Exception {
+		Class.forName("org.sqlite.JDBC");
+		Connection con = DriverManager.getConnection(DB_CONNECTION_URL);
+		
+		return con;
 	}
 }

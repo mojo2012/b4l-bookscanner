@@ -9,21 +9,26 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import at.spot.util.StringUtil;
+
 import com.google.gson.Gson;
 
 public class Util {
 	private final static String	TAG					= "Util";
 
-	static final String			URL_ISBN_10			= "https://www.googleapis.com/books/v1/volumes?q=isbn:%s";
+	private final static String	API_KEY				= "AIzaSyADMb1ZO28YsK3J1bVwiKJaxD5FUexEunk";
+
+	static final String			URL_ISBN_10			= "https://www.googleapis.com/books/v1/volumes?q=isbn:%s&key=" + API_KEY;
 	// static final String URL_ISBN_13 =
 	// "https://www.googleapis.com/books/v1/volumes?q=isbn-13:%s";
-	static final String			URL_GENERAL_SEARCH	= "https://www.googleapis.com/books/v1/volumes?q=%s";
+	static final String			URL_GENERAL_SEARCH	= "https://www.googleapis.com/books/v1/volumes?q=%s&key=" + API_KEY;
+	static final String 		IN_AUTHOR			= "inauthor:%s";
 
-	public static VolumeList getBookByISBN(String isbn) {
+	public static VolumeList getBookByISBN(String isbn) throws Exception {
 		return getBookByISBN10(isbn);
 	}
 
-	public static VolumeList getBookByISBN10(String isbn) {
+	public static VolumeList getBookByISBN10(String isbn) throws Exception {
 		Gson gson = new Gson();
 		VolumeList b = null;
 
@@ -32,30 +37,36 @@ public class Util {
 
 			b = gson.fromJson(json, VolumeList.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}
 
 		return b;
 	}
 
-	public static VolumeList getBookByTitle(String title) {
+	public static VolumeList getBookByTitle(String title) throws Exception {
+		return getBookByTitle(title, null);
+	}
+	
+	public static VolumeList getBookByTitle(String title, String authors) throws Exception {
 		Gson gson = new Gson();
 		VolumeList b = null;
 
 		String encodedString = title;
+		String endcodedAuthrors = (StringUtil.check(authors) ? String.format(IN_AUTHOR, authors) : "");
 
 		try {
 			encodedString = URLEncoder.encode(title, "utf-8");
+			endcodedAuthrors = URLEncoder.encode(endcodedAuthrors, "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			String json = getStringContent(String.format(URL_GENERAL_SEARCH, encodedString));
+			String json = getStringContent(String.format(URL_GENERAL_SEARCH + "&" + endcodedAuthrors, encodedString));
 
 			b = gson.fromJson(json, VolumeList.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}
 
 		return b;
@@ -100,7 +111,7 @@ public class Util {
 			ret = sb.toString();
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw ex;
 		} finally {
 			try {
 				buf.close();

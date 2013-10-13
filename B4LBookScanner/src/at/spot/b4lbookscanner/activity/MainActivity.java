@@ -140,8 +140,12 @@ public class MainActivity extends Activity {
 
 				String value = input.getText().toString();
 				lastEnteredTitle = value;
-
-				showBookDetailsView(Util.getBookByTitle(value));
+				
+				try {
+					showBookDetailsView(Util.getBookByTitle(value));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 
@@ -184,7 +188,13 @@ public class MainActivity extends Activity {
 	}
 
 	protected void openBookDetailsView(String barcode) {
-		VolumeList b = Util.getBookByISBN(barcode);
+		VolumeList b = null;
+		
+		try {
+			b = Util.getBookByISBN(barcode);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
 		showBookDetailsView(b);
 	}

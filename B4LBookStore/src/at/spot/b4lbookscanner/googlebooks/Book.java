@@ -1,19 +1,23 @@
 package at.spot.b4lbookscanner.googlebooks;
 
+import at.spot.util.StringUtil;
+
+
 public class Book {
 
-	int		id;
-	String	isbn;
-	String	isbnType;
-	String	authors;
-	String	title;
-	String	summary;
-	String	publisher;
-	String	releaseDate;
-	String	number;
-	String	imageUrl;
+	Integer id;
+	String isbn;
+	String isbnType;
+	String authors;
+	String title;
+	String summary;
+	String publisher;
+	String releaseDate;
+	String number;
+	String imageUrl;
+	String storageLocation;
 
-	float	price;
+	Float	price;
 
 	public Book() {
 
@@ -67,8 +71,8 @@ public class Book {
 		return this.isbnType;
 	}
 
-	public void setIsbnType(String isbn_type) {
-		this.isbnType = isbn_type;
+	public void setIsbnType(String isbnType) {
+		this.isbnType = isbnType;
 	}
 
 	public String getAuthors() {
@@ -111,16 +115,24 @@ public class Book {
 		this.releaseDate = releaseDate;
 	}
 
-	public float getPrice() {
+	public Float getPrice() {
 		return this.price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(Float price) {
 		this.price = price;
 	}
 
 	public String getNumber() {
 		return this.number;
+	}
+
+	public String getStorageLocation() {
+		return storageLocation;
+	}
+
+	public void setStorageLocation(String storageLocation) {
+		this.storageLocation = storageLocation;
 	}
 
 	public void setNumber(String number) {
@@ -139,5 +151,11 @@ public class Book {
 		return getId() + ";" + getIsbn() + ";" + getIsbnType() + ";" + getAuthors() + ";" + getTitle() + ";"
 				+ getSummary() + ";" + getPublisher() + ";" + getReleaseDate() + ";" + getPrice() + ";"
 				+ (getNumber() != null ? getNumber() : "") + ";" + getImageUrl();
+	}
+	
+	public boolean isFilledOut() {
+		return StringUtil.check(getIsbn()) & StringUtil.check(getPublisher()) & StringUtil.check(getAuthors()) &
+				StringUtil.check(getIsbnType()) & StringUtil.check(getTitle()) & StringUtil.check(getReleaseDate()) &
+				StringUtil.check(getImageUrl()); 
 	}
 }
