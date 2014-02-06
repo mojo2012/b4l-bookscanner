@@ -1,4 +1,4 @@
-package at.spot.b4lbookscanner.googlebooks;
+package at.spot.b4lbookscanner.googlebooks.util;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import at.spot.b4lbookscanner.googlebooks.VolumeList;
 import at.spot.util.StringUtil;
 
 import com.google.gson.Gson;
