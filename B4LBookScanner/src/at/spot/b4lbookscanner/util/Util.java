@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
 
-public class Util extends at.spot.b4lbookscanner.googlebooks.Util {
+public class Util extends at.spot.b4lbookscanner.googlebooks.util.Util {
 	private final static String	TAG					= "Util";
 
 	static final String			URL_ISBN_10			= "https://www.googleapis.com/books/v1/volumes?q=isbn:%s";

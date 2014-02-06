@@ -21,9 +21,9 @@ import java.util.List;
 
 import at.spot.b4lbookscanner.googlebooks.Book;
 import at.spot.b4lbookscanner.googlebooks.IndustryIdentifiers;
-import at.spot.b4lbookscanner.googlebooks.Util;
 import at.spot.b4lbookscanner.googlebooks.VolumeInfo;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
+import at.spot.b4lbookscanner.googlebooks.util.Util;
 import at.spot.util.StringUtil;
 
 public class BookImageGrabber {

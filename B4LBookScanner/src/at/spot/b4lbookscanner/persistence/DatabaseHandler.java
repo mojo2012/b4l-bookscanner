@@ -69,11 +69,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.execSQL(CREATE_CONTACTS_TABLE);
 	}
 
+	public void resetDatabase() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		dropDatabase(db);
+		initDB(db);
+	}
+	
+	public void dropDatabase(SQLiteDatabase db) {
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
+	}
+	
 	// Upgrading database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Drop older table if existed
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
+		dropDatabase(db);
 
 		// Create tables again
 		initDB(db);
@@ -140,7 +151,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		Cursor cursor = db.query(TABLE_BOOKS, new String[] {
 				KEY_ID, KEY_ISBN, KEY_ISBN_TYPE, KEY_TITLE, KEY_AUTHORS, KEY_PUBLISHER, KEY_RELEASE_DATE,
-				KEY_SUMMARY, KEY_PRICE, KEY_NUMBER }, KEY_TITLE + "=?",
+				KEY_SUMMARY, KEY_PRICE, KEY_NUMBER, KEY_IMAGE_URL }, KEY_TITLE + "=?",
 				new String[] { title }, null, null, null, null);
 
 		if (cursor != null)
@@ -160,15 +171,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	public List<Book> getAllBooks() {
 		List<Book> books = new ArrayList<Book>();
-		String selectQuery = "SELECT id, isbn, isbn_type, title, authors, publisher, release_date, summary, price, number FROM "
-				+ TABLE_BOOKS;
+//		String selectQuery = "SELECT id, isbn, isbn_type, title, authors, publisher, release_date, summary, price, number FROM " + TABLE_BOOKS;
 
 		SQLiteDatabase db = null;
 
 		try {
-			db = this.getWritableDatabase();
-			Cursor cursor = db.rawQuery(selectQuery, null);
-
+			db = this.getReadableDatabase();
+			
+			Cursor cursor = db.query(TABLE_BOOKS, new String[] {
+					KEY_ID, KEY_ISBN, KEY_ISBN_TYPE, KEY_TITLE, KEY_AUTHORS, KEY_PUBLISHER, KEY_RELEASE_DATE,
+					KEY_SUMMARY, KEY_PRICE, KEY_NUMBER, KEY_IMAGE_URL }, null,
+					null, null, null, null, null);
+			
+//			Cursor cursor = db.rawQuery(selectQuery, null);
+			
 			if (cursor.moveToFirst()) {
 				do {
 					Book book = newBook(cursor);
@@ -194,7 +210,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 							bookCursor.getString(5),
 							bookCursor.getString(6),
 							bookCursor.getString(7));
-
+		
 		b.setPrice(bookCursor.getFloat(8));
 		b.setNumber(bookCursor.getString(9));
 		b.setImageUrl(bookCursor.getString(10));

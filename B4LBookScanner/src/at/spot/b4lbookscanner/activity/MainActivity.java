@@ -9,10 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.RenderScript.RSErrorHandler;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -21,8 +23,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import at.spot.b4lbookscanner.R;
 import at.spot.b4lbookscanner.googlebooks.Items;
-import at.spot.b4lbookscanner.googlebooks.Util;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
+import at.spot.b4lbookscanner.googlebooks.util.Util;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -268,5 +270,31 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case R.id.menu_settings:
+	        
+	        return true;
+	    case R.id.menu_reset_db:
+	        resetDatabase();
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
 
+	protected void resetDatabase() {
+		try {
+			DatabaseHandler db = new DatabaseHandler(this);
+	        db.resetDatabase();
+	        
+	        showToast("Database successfully reset!");
+		} catch (Exception e) {
+			showToast("Database reset failed!");
+			Log.e(TAG, e.getStackTrace().toString());
+		}
+	}
 }
