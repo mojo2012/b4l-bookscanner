@@ -1,0 +1,4 @@
+<?php
+	$API_KEY 			= "NL0VF0CJ48EE3QVNHO4W0ZWCZ6UY1VPN";
+	$IMG_BASEPATH		= "../img/p/";
+?>

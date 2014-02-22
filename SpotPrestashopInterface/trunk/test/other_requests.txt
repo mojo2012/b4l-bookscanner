@@ -1,0 +1,5 @@
+[get all categories]
+URL: <base url>/service/category.php
+
+[get all stock locations]
+URL: <base url>/service/stock_location.php
