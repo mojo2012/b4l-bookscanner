@@ -1,5 +1,6 @@
 <?php
 
+	require_once("config.php");
 	require_once("util.php");
 
 	function getJsonPayload() {
@@ -51,5 +52,17 @@
 	
 	function sendResponseError($msg) {
 		return sendResponse(400, $msg, null);
+	}
+	
+	function authenticateRequest() {
+		global $API_KEY;
+		
+		foreach (getallheaders() as $name => $value) {
+			if ($name == 'Api-Key' && $value == $API_KEY) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 ?>

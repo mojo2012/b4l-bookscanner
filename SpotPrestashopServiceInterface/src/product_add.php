@@ -495,9 +495,11 @@
 	}
 
 	function main() {
-		$productId = -1;
-	
 		try {
+			if (!authenticateRequest()) {
+				throw new Exception("Autenticated failed!");
+			}
+		
 			$data = getJsonPayload();
 
 			$productId = addProduct($data);

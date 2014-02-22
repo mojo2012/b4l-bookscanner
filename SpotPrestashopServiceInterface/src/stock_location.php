@@ -28,6 +28,10 @@
 	
 	function main() {
 		try {
+			if (!authenticateRequest()) {
+				throw new Exception("Autenticated failed!");
+			}
+		
 			$categories = getAllCategories();
 
 			sendResponseOK($categories);
