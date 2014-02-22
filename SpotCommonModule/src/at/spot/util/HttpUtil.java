@@ -38,20 +38,11 @@ public class HttpUtil {
 		BufferedWriter writer  = null;
 		
 		if (type == RequestType.Get && params != null) {
-			connection = getConnection(new URL(url, getQueryString(params)), username, password);
+			connection = getConnection(new URL(url, getQueryString(params)), username, password, headerParams);
 			
 			connection.setRequestMethod("GET");
-			
-			if (headerParams != null) {
-				for (String k : headerParams.keySet()) {
-					String v = headerParams.get(k);
-					
-					connection.setRequestProperty(k, v);
-				}
-			}
-			
 		} else {
-			connection = getConnection(url, username, password);
+			connection = getConnection(url, username, password, headerParams);
 
 			os = connection.getOutputStream();
 			writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
@@ -64,7 +55,14 @@ public class HttpUtil {
 		
 		writer.flush();
 		
-		InputStream response = connection.getInputStream();
+		InputStream response = null;
+		
+		if (connection.getResponseCode() >= 400) {
+			response = connection.getErrorStream();
+		} else {
+			response = connection.getInputStream();
+		}
+		
 		ret = StringUtil.toString(response);
 		
 		return ret;
@@ -91,10 +89,11 @@ public class HttpUtil {
 	    return result.toString();
 	}
 	
-	protected static HttpURLConnection getConnection(URL url, String username, String password) throws IOException {
+	protected static HttpURLConnection getConnection(URL url, String username, String password, Map<String, String> headerParams) throws IOException {
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		
 		connection.setRequestProperty("Accept-Charset", "UTF-8");
+		
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
 		
@@ -102,6 +101,14 @@ public class HttpUtil {
 			String userpass = username + ":" + password;
 			String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
 			connection.setRequestProperty ("Authorization", basicAuth);
+		}
+
+		if (headerParams != null) {
+			for (String k : headerParams.keySet()) {
+				String v = headerParams.get(k);
+				
+				connection.setRequestProperty(k, v);
+			}
 		}
 		
 		return connection;
