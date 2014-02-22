@@ -3,6 +3,8 @@ package at.spot.prestashop.service;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -49,13 +51,21 @@ public class PrestaShopClient {
 			
 			URL updateUrl = getWebserviceUrl(WebserviceFunction.AddProduct); 
 			
-			String ret = HttpUtil.request(RequestType.Post, updateUrl, null, json, null, null);
+			String ret = HttpUtil.request(RequestType.Post, updateUrl, getAuthenticationHeaderFields(), null, json, null, null);
 			
 			System.out.println(ret);
 		} catch (JAXBException e) {
 			Log.error("PrestaShopClient.createProduct", e, true);
 			throw new Exception("Cannot create product.");
 		}
+	}
+	
+	protected Map<String, String> getAuthenticationHeaderFields() {
+		Map<String, String> header = new HashMap<>();
+		
+		header.put("Api_key", apiKey);
+		
+		return header;
 	}
 //	
 //	public Product getProduct(int id) throws Exception {
@@ -130,6 +140,7 @@ public class PrestaShopClient {
 			p.setStatus(EStatus.Used);
 			p.setSupplierId(32);
 			p.setVatRate(10f);
+			p.setEan13("978-3-86680-192-9");
 			
 			pc.addProduct(p);
 			
