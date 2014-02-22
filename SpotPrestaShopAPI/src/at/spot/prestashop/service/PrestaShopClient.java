@@ -1,6 +1,5 @@
 package at.spot.prestashop.service;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -11,6 +10,7 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import at.spot.gson.ByteArrayToBase64TypeAdapter;
 import at.spot.log.Log;
 import at.spot.prestashop.service.json.EStatus;
 import at.spot.prestashop.service.json.Product;
@@ -18,6 +18,7 @@ import at.spot.util.HttpUtil;
 import at.spot.util.HttpUtil.RequestType;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class PrestaShopClient {
 	
@@ -124,7 +125,10 @@ public class PrestaShopClient {
 	}
 	
 	protected String convertToJson(Object o) {
-		return new Gson().toJson(o);
+		//convert byte arrays to base64 encoded strings
+		Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter()).create();
+//		gson = new Gson().toJson(o);
+		return gson.toJson(o);
 	}
 	
 	public static void main(String[] args) {
@@ -138,7 +142,7 @@ public class PrestaShopClient {
 			p.setLongDescription("long test");
 			p.setPrice(1f);
 			p.setTags(Arrays.asList("test_tag", "test_tag2"));
-//			p.setCategoryId(33);
+			p.setCategoryId(33);
 			p.setOnline(false);
 			p.setStatus(EStatus.Used);
 //			p.setSupplierId(32);
@@ -148,7 +152,7 @@ public class PrestaShopClient {
 			
 			byte[] image = Files.readAllBytes(Paths.get("/Users/matthias/Desktop/913.jpg"));
 			
-			//p.getImages().add(image);
+			p.getImages().add(image);
 			
 			pc.addProduct(p);
 			
