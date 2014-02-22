@@ -1,7 +1,10 @@
 package at.spot.prestashop.service;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +66,7 @@ public class PrestaShopClient {
 	protected Map<String, String> getAuthenticationHeaderFields() {
 		Map<String, String> header = new HashMap<>();
 		
-		header.put("Api_key", apiKey);
+		header.put("Api-Key", apiKey);
 		
 		return header;
 	}
@@ -135,12 +138,17 @@ public class PrestaShopClient {
 			p.setLongDescription("long test");
 			p.setPrice(1f);
 			p.setTags(Arrays.asList("test_tag", "test_tag2"));
-			p.setCategoryId(33);
+//			p.setCategoryId(33);
 			p.setOnline(false);
 			p.setStatus(EStatus.Used);
-			p.setSupplierId(32);
+//			p.setSupplierId(32);
+			p.setStockLocationId(36);
 			p.setVatRate(10f);
 			p.setEan13("978-3-86680-192-9");
+			
+			byte[] image = Files.readAllBytes(Paths.get("/Users/matthias/Desktop/913.jpg"));
+			
+			//p.getImages().add(image);
 			
 			pc.addProduct(p);
 			

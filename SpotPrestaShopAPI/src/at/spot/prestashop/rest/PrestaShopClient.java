@@ -66,7 +66,7 @@ public class PrestaShopClient {
 			
 			URL updateUrl = getWebserviceUrl(WebserviceRessourceType.Products); 
 			
-			HttpUtil.request(RequestType.Post, updateUrl, null, apiKey, apiKey);
+			HttpUtil.request(RequestType.Post, updateUrl, null, null, apiKey, apiKey);
 		} catch (JAXBException e) {
 			Log.error("PrestaShopClient.createProduct", e, true);
 			throw new Exception("Cannot create product.");
@@ -105,7 +105,7 @@ public class PrestaShopClient {
 		String ret = null;
 		
 		try {
-			ret = HttpUtil.request(RequestType.Post, url, null, apiKey, apiKey);
+			ret = HttpUtil.request(RequestType.Post, url, null, null, apiKey, apiKey);
 		} catch (Exception e) {
 			//Log.error("PrestaShopClient.getRawXmlFromWebservice", e, true);
 			throw e;

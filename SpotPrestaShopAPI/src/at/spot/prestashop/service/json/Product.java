@@ -15,7 +15,7 @@ public class Product {
 	private float			vatRate;
 	private int				amount;
 	private Integer			categoryId;
-	private List<byte[]>	images;
+	private List<byte[]>	images	= new ArrayList<byte[]>();
 	private Integer			supplierId;
 	private Integer			stockLocationId;
 
