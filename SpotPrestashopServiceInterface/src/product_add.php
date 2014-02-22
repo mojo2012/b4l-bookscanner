@@ -456,7 +456,7 @@
 			$ean13 = $data["ean13"];
 			$isOnline = $data["isOnline"];
 			$status = $data["status"];
-			$supplierId = $data["supplierId"];
+			$supplierId = $data["supplierId"]; //may not been set
 			$vatRate = $data["vatRate"];
 			$stockLocationId = $data["stockLocationId"];
 			$images = $data["images"];
@@ -464,8 +464,7 @@
 			if (!is_null($title) && !is_null($amount) && !is_null($shortDescription) && 
 				!is_null($longDescription) && !is_null($price) && !is_null($tags) &&
 				!is_null($categoryId) && !is_null($isOnline) && !is_null($status) &&
-				!is_null($supplierId) && !is_null($vatRate) && !is_null($ean13) &&
-				!is_null($stockLocationId)) {
+				!is_null($vatRate) && !is_null($ean13) && !is_null($stockLocationId)) {
 				
 				//$productId = 2222;
 				
@@ -484,7 +483,7 @@
 					addImage($productId, $images);
 				
 			} else {
-				throw new Exception("Some attribute are not set.");
+				throw new Exception("Some attributes are not set.");
 			}
 			
 		} catch (Exception $ex) {
