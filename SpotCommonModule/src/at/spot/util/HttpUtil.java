@@ -22,14 +22,14 @@ public class HttpUtil {
 		Head
 	}
 	
-	public static String request(RequestType type, URL url, Map<String, String> params, String username, String password) 
-			throws Exception {
+	public static String request(RequestType type, URL url, Map<String, String> headerParams, Map<String, String> params, String username, 
+			String password) throws Exception {
 		
 		return request(type, url, params, null, username, password);
 	}
 	
-	public static String request(RequestType type, URL url, Map<String, String> params, String content, String username, String password)
-			throws Exception {
+	public static String request(RequestType type, URL url, Map<String, String> headerParams, Map<String, String> params, String content, 
+			String username, String password) throws Exception {
 		
 		String ret = null;
 		
@@ -41,6 +41,15 @@ public class HttpUtil {
 			connection = getConnection(new URL(url, getQueryString(params)), username, password);
 			
 			connection.setRequestMethod("GET");
+			
+			if (headerParams != null) {
+				for (String k : headerParams.keySet()) {
+					String v = headerParams.get(k);
+					
+					connection.setRequestProperty(k, v);
+				}
+			}
+			
 		} else {
 			connection = getConnection(url, username, password);
 
