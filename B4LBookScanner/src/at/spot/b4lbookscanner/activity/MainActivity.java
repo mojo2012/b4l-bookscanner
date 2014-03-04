@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.RenderScript.RSErrorHandler;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
@@ -46,7 +45,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		setupUI();
 	}
 
@@ -142,7 +141,7 @@ public class MainActivity extends Activity {
 
 				String value = input.getText().toString();
 				lastEnteredTitle = value;
-				
+
 				try {
 					showBookDetailsView(Util.getBookByTitle(value));
 				} catch (Exception ex) {
@@ -191,7 +190,7 @@ public class MainActivity extends Activity {
 
 	protected void openBookDetailsView(String barcode) {
 		VolumeList b = null;
-		
+
 		try {
 			b = Util.getBookByISBN(barcode);
 		} catch (Exception ex) {
@@ -270,28 +269,28 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.menu_settings:
-	        
-	        return true;
-	    case R.id.menu_reset_db:
-	        resetDatabase();
-	        return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+
+			return true;
+		case R.id.menu_reset_db:
+			resetDatabase();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	protected void resetDatabase() {
 		try {
 			DatabaseHandler db = new DatabaseHandler(this);
-	        db.resetDatabase();
-	        
-	        showToast("Database successfully reset!");
+			db.resetDatabase();
+
+			showToast("Database successfully reset!");
 		} catch (Exception e) {
 			showToast("Database reset failed!");
 			Log.e(TAG, e.getStackTrace().toString());
