@@ -1,6 +1,7 @@
 package at.spot.b4lbookscanner.activity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
@@ -24,7 +25,9 @@ import at.spot.b4lbookscanner.R;
 import at.spot.b4lbookscanner.googlebooks.Items;
 import at.spot.b4lbookscanner.googlebooks.VolumeList;
 import at.spot.b4lbookscanner.googlebooks.util.Util;
+import at.spot.b4lbookscanner.persistence.DataStore;
 import at.spot.b4lbookscanner.persistence.DatabaseHandler;
+import at.spot.prestashop.service.PrestaShopClient;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -45,8 +48,21 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
+		prepareDataStore();
+
 		setupUI();
+	}
+
+	private void prepareDataStore() {
+		try {
+			PrestaShopClient pc = new PrestaShopClient("http://shop.b4l-wien.at/service",
+														"NL0VF0CJ48EE3QVNHO4W0ZWCZ6UY1VPN");
+
+			DataStore.categories = Arrays.asList(pc.getCategories());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void setupUI() {
@@ -274,14 +290,14 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
-		case R.id.menu_settings:
+			case R.id.menu_settings:
 
-			return true;
-		case R.id.menu_reset_db:
-			resetDatabase();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+				return true;
+			case R.id.menu_reset_db:
+				resetDatabase();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
